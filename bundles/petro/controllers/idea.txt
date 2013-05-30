@@ -1,0 +1,197 @@
+<?php
+
+/**
+ * TODO:
+ *  - Auth
+ *  - combine Master/Detail into App
+ */
+
+class Petro_App_Controller extends Petro_Auth_Controller
+{
+	$model = null;	// base, master, base_model, model_base, model_master
+
+	$model_many = null;	// detail, model_detail, model_associate
+
+	// $model_many = array( (string) DetailClass, (string) MethodInBaseModel )
+	// $model_many = 'LedgerItem';					// --> $ledger->ledgeritems
+	// $model_many = array('LedgerItem')			// --> $ledger->ledgeritems
+	// $model_many = array('LedgerItem', 'items') 	// --> $ledger->items
+	// $model_many = 'Comment';						// --> $post->comments
+	// $model_many = array('Comment')				// --> $post->comments
+	// $model_many = array('Comment', 'comments') 	// --> $post->comments
+
+}
+
+
+// App logic flow
+
+index: --> setup_grid --> create, view, edit, delete
+
+create: --> setup_form/make_view--> save/store, cancel --> index
+
+view: --> setup_view --> edit, delete, cancel --> index
+
+edit: --> setup_form/make_view --> save/update, cancel --> index
+
+
+store: --> setup_validation, get_input_data, before_insert, save/insert, after_insert --> index
+
+update: --> setup_validation, get_input_data, before_update, save/update, after_update --> index
+
+delete: --> confirm_delete --> delete, cancel, --> index
+
+
+------------------------------------------------------------------
+
+
+FIX:
+- login form not displaying "notify" message.
+
+FIXED:
+- Login menu on the top-right not working.
+
+
+
+TODO:
+- AutoForm : adding more control types
+	e.g. AutoForm::number(), AutoForm::date(), AutoForm::date_range(), etc.
+- AutoForm : 'lookup[table]' type does not allow (single/multiple) where condition
+	this is the limitation of Lookup class.
+	  - Lookup class should allow this, but how to allow multiple where clauses.
+- Autocomplete / select dialog
+- Modify Routes : /l3/system/bank --> Bank_Controller. Possible?
+- Consider creating separating table for App
+	- can be used in Permissions form to make dropdown list
+	- easy module installation in the future. this could also enable
+	  a central place to install/register config for the module.
+	- possible to create ui for it as well.
+- Implement ACL.
+
+		user --> group --> permissions
+
+		user  --belongs-to--> group
+		group --has-many--> users
+		group --has-many--> permissions
+
+		user --can-acccess-limited-function--> route auth
+
+	- create users table and group table migrations & seed.
+	- create ACL permission table migration & seed.
+	- add get_permission() to User model. this will retrieve the given user permission settings from 'app_acl' table (probably via another model, e.g. ACL/UserAcl/Permission.)
+	- user must belong to one and only one group.
+	- users in the same group have the same permission.
+			- future version may be able to override the group permission.
+				- is it safe? the permission might be overridden up to admin?
+			- the overridden permission might be stored inside the user record itself in TEXT field. (looks like Sentry.)
+	- app-group-permissions. e.g. client-users-CRUDP
+	- or group-app-permission. e.g. users-client-CRUDP
+- 'password' fields value must not be displayed on the form
+   (enforce Eloquent's hidden?)
+- Each app (Petro_App_Controller) authentication should be optional (aka. required_login?)
+- Implement user registration, reset, activation, confirmation.
+- how to determine the error when Eloquent model save() return false.
+- Revise "template" config to use view/blade instead.
+- Create another controller for Master/Detail Form for Ledger_Controller to extend from.
+- Define specific entities and design the module for them
+	e.g. 	Bank Account
+			 - code
+			 - bank: code, name
+			 - branch
+			 - account number
+			 - account name
+			 - account type: savings, current
+			 - use_check
+			 - balance
+			Cheques
+			 - type: Payable, Receivable
+			 - date : วันที่รับเช็ค/จ่ายเช็ค
+			 - source: GL, AP, AR, ...
+			 - account id (for payable)
+			 - รหัสเจ้าหนี้/ลูกหนี้
+			 - bank code
+			 - bank branch
+			 - cheque number
+			 - cheque date
+			 - amount
+			 - status : on hand, deposited, passed, cancelled, returned
+			 - deposited date
+			 - cancelled date
+			 - returned date
+			 - doc no  เลขที่เอกสารเช็คจ่าย
+			 - passed date
+
+			Withholding Tax (ภาษีถูกหัก ณ ที่จ่าย)
+			 - type: หัก, ถูกหัก
+			 - ref source: type, id
+			 - period: month, year
+			 - ar/ap: code, name
+			 - description
+			 - tax rate
+			 - amount
+			 - tax amount
+			Income Tax (ภงด.3 บุคคลธรรมดา)
+			 - doc no
+			 - doc date
+			 - period: month, year
+			 - ap: code, name
+			 - id card no
+			 - tax payer id
+			 - type: นิติบุคคล, ...
+			 - payer type: ...
+			 - round: ยื่นเพิ่มเติมครั้งที่
+			 - description
+			 - tax rate
+			 - amount
+			 - tax amount
+			Value Added Tax
+			 - tax type: purchase, sale
+			 - date
+			 - doc no
+			 - description
+			 - amount
+			 - vat amount
+			 - for period-month
+			 - for period-year
+- Menu:
+	- menu group
+	- name
+	- title
+	- title_en
+	- seq
+	- link / url
+	- has submenu?
+	- parent menu
+	- level
+	- active
+- Ledger : `ledger_item` should be tied to specific entity according to its
+  nature. e.g.
+    - checking accounts
+    - tax related accounts
+
+- Petty Cash
+
+		Petty Cash records (special Journal Book) -- for SME, easy to understand and manage
+		        ^
+		        |
+		        |
+		        v
+		       GL
+
+
+DONE:
+- Change Sentry to Laravel's Auth
+- Protecting route with Auth
+- Update DB task seed_dummy_users to NOT use Sentry to insert user data.
+- AutoForm : rearrange parameters of form elements to the following sequence
+	- text($name, $label = '', $value = null, $attr = array())
+- Petro\Model : adding form field 'default' option to the properties.
+- AutoForm : refactor to make $error parameter of form elements function optional
+	by checking the $error from Session instead.
+-
+
+
+IDEA:
+- Consider making 'app' as 'app module'
+	- each 'module' can utilize authentication if required
+	- each 'module' can specify which action is accessible by a specific group of users
+
