@@ -386,6 +386,19 @@ class MySQL extends Grammar {
 	}
 
 	/**
+	 * Generate the data-type definition for a time.
+	 *
+	 * @param  Fluent $column
+	 * @return string
+	 *
+	 * Note: added by @ratiw, this is a hack
+	 */
+	protected function type_time(Fluent $column)
+	{
+		return 'TIME';
+	}
+
+	/**
 	 * Generate the data-type definition for a timestamp.
 	 *
 	 * @param  Fluent  $column

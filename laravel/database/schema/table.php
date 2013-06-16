@@ -338,6 +338,19 @@ class Table {
 	}
 
 	/**
+	 * Add a time column to the table.
+	 *
+	 * @param  string  $name
+	 * @return Fluent
+	 *
+	 * Note: added by @ratiw, this is a hack
+	 */
+	public function time($name)
+	{
+		return $this->column(__FUNCTION__, compact('name'));
+	}
+
+	/**
 	 * Add a timestamp column to the table.
 	 *
 	 * @param  string  $name
