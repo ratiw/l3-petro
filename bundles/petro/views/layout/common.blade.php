@@ -16,6 +16,7 @@
     {{ HTML::script('js/jquery.validator.plugin.js') }}
     {{-- HTML::script('js/jquery.form.js') --}}
     <!-- TODO: find the way to yield jstable.js out only when necessary -->
+    {{ HTML::script('js/date.js') }}
     {{ HTML::script('js/accounting.min.js') }}
     {{ HTML::script('js/jquery.json-2.3.js') }}
     {{ HTML::script('js/jstable.js') }}
