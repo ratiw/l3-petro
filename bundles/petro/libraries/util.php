@@ -259,4 +259,39 @@ class Util
 	{
 		return mktime(0, 0, 0, $month, $day, $year);
 	}
+
+	/**
+	 * Build array of tables columns.
+	 * Adapt from DBUtil.
+	 *
+	 * @package    DBUtil
+	 * @author     Scott Travis <scott.w.travis@gmail.com>
+	 * @link       http://github.com/swt83/laravel-dbutil
+	 * @license    MIT License
+	 *
+	 * @param	string	$table
+	 * @param	string	$connection
+	 *
+	 */
+	public static function table_columns($table, $connection = null)
+	{
+		// query the pdo
+		$result = \DB::connection($connection)->pdo->query('show columns from '.$table);
+
+		// build array
+		$columns = array();
+		while ($row = $result->fetch(\PDO::FETCH_NUM))
+		{
+			$columns[$row[0]] = array(
+				'type'    => $row[1],
+				'null'    => $row[2],
+				'key'     => $row[3],
+				'default' => $row[4],
+				'extra'   => $row[5]
+			);
+		}
+
+		// return
+		return $columns;
+	}
 }

@@ -66,7 +66,18 @@ class AutoForm
 
 		$uneditables = isset($model::$uneditables) ? $model::$uneditables : array();
 
-		foreach ($model::$properties as $name => $settings)
+		if (property_exists($model, 'properties'))
+		{
+			$properties = $model::$properties;
+		}
+		else
+		{
+			$m = new $model;
+			$properties = array_keys(Util::table_columns($m->table()));
+		}
+
+		// foreach ($model::$properties as $name => $settings)
+		foreach ($properties as $name => $settings)
 		{
 			if (is_int($name))
 			{
