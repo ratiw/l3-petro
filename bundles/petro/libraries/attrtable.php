@@ -16,7 +16,9 @@ class AttrTable
 		if (is_null($columns) and $data instanceof \Laravel\Database\Eloquent\Model)
 		{
 			$model = get_class($data);
-			$columns = $model::$properties;
+			$columns = property_exists($model, 'properties') 
+				? $model::$properties
+				: array_keys(Util::table_columns($data->table()));
 			$key = $model::$key;
 
 			$model .= '.';	// for later use with Lang::line
