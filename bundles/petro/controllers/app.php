@@ -324,8 +324,8 @@ class Petro_App_Controller extends Petro_Auth_Controller
 		$model = $this->model;
 		$name_lc = \Str::lower($model);
 
-		$this->action_items->add('Edit '.$this->app_name, $name_lc.'/edit/'.$id);
-		$this->action_items->add('Delete '.$this->app_name, $name_lc.'/destroy/'.$id,
+		$this->action_items->add('Edit '.\Str::singular($this->app_name), $name_lc.'/edit/'.$id);
+		$this->action_items->add('Delete '.\Str::singular($this->app_name), $name_lc.'/destroy/'.$id,
 			array('data-toggle' => 'modal', 'data-target' => '#petro-confirm', 'class' => 'del-item',)
 		);
 
