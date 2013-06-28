@@ -107,5 +107,21 @@ Route::filter('csrf', function()
 
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::to('login');
+	if (Auth::guest())
+	{
+		Session::put('url', URL::current());
+		return Redirect::to('user/login');
+	}
+	else
+	{
+		$user = Auth::user();
+		$app  = URI::segment(1);
+		$func = URI::segment(2) ?: 'index';
+
+		if ( ! $user->group()->has_access($app, $func))
+		{
+			// return Redirect::to('user/not_allow');
+			return "You do not have appropriate right to access this area.";
+		}
+	}
 });
