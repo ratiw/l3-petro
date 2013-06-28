@@ -322,7 +322,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
 	public function show($id)
 	{
 		$model = $this->model;
-		$name_lc = \Str::lower($model);
+		$name_lc = \Str::lower($this->app_name);
 
 		$this->action_items->add('Edit '.\Str::singular($this->app_name), $name_lc.'/edit/'.$id);
 		$this->action_items->add('Delete '.\Str::singular($this->app_name), $name_lc.'/destroy/'.$id,
