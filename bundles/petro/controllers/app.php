@@ -107,7 +107,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
 
 	public function after($response)
 	{
-		$this->layout->page_title = $this->page_title;
+		$this->layout->page_title = Lang::line($this->page_title)->get();
 
 		// render breadcrumbs
 		$this->layout->breadcrumbs = Petro\Breadcrumbs::render($this->breadcrumbs_replace);
