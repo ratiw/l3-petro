@@ -15,14 +15,14 @@ class Util
 		'in'	    => 'in',
 	);
 
-	public static function lang($key)
+	public static function lang($key, $default = false)
 	{
 		if (is_array($key))
 		{
 			$key = $key[0].'.'.$key[1];
 		}
 
-		return \Lang::line($key)->get(null, false);
+		return \Lang::line($key)->get(null, $default);
 	}
 
 	public static function format($format, $value)

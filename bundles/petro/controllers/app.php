@@ -224,7 +224,9 @@ class Petro_App_Controller extends Petro_Auth_Controller
 
 		$this->setup_index($grid);
 
-		$this->action_items->add('Add New '.\Str::singular($this->page_title), $this->app_url.'/create');
+		$this->action_items->add(
+			Petro\Util::lang('petro.action_item:btn:add_new', 'Add New').\Str::singular($this->page_title), $this->app_url.'/create'
+		);
 
 		return $grid->render(
 			$this->grid_columns,
@@ -324,8 +326,8 @@ class Petro_App_Controller extends Petro_Auth_Controller
 		$model = $this->model;
 		$name_lc = \Str::lower($this->app_name);
 
-		$this->action_items->add('Edit '.\Str::singular($this->app_name), $name_lc.'/edit/'.$id);
-		$this->action_items->add('Delete '.\Str::singular($this->app_name), $name_lc.'/destroy/'.$id,
+		$this->action_items->add(Petro\Util::lang('petro.action_item:btn:edit', 'Edit').\Str::singular($this->app_name), $name_lc.'/edit/'.$id);
+		$this->action_items->add(Petro\Util::lang('petro.action_item:btn:delete', 'Delete').\Str::singular($this->app_name), $name_lc.'/destroy/'.$id,
 			array('data-toggle' => 'modal', 'data-target' => '#petro-confirm', 'class' => 'del-item',)
 		);
 
