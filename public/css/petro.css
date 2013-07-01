@@ -609,3 +609,17 @@ input[type="tel"], input[type="color"], .uneditable-input {
 	div.input-append > input + button {
 		padding: 7px 12px;
 	}
+
+	.form-horizontal div.controls span.help-block {
+		margin-top: 3px;
+	}
+
+	table.index_table th.center {
+		text-align: center;
+	}
+	table.index_table th.left {
+		text-align: left;
+	}
+	table.index_table th.right {
+		text-align: right;
+	}	

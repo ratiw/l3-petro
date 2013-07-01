@@ -49,11 +49,6 @@ class Grid
 
 	public function render($fields = null, $page = 1, $order = null, $scope = null, $filters = null)
 	{
-		// $this->set_page(\Input::query('page', 1));
-		// $this->set_order_by(\Input::query('order'));
-		// $this->set_scope(\Input::query('scope'));
-		// $this->set_filters(\Input::get('q'));
-
 		$this->set_page($page);
 		$this->set_order_by(is_null($order) ? $this->order_by : $order);
 		$this->set_scope($scope);
@@ -224,6 +219,8 @@ class Grid
 			$settings = $this->fields[$name]['settings'];
 
 			if ( ! $settings['visible']) continue;
+
+			$settings['title-align'] and $class .= ' '.$settings['title-align'];
 
 			if ($settings['sortable'])
 			{

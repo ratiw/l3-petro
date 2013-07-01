@@ -150,6 +150,7 @@ class AutoForm
 		isset($settings['visible'])  or $settings['visible']  = true;
 		isset($settings['sortable']) or $settings['sortable'] = false;
 		isset($settings['align'])    or $settings['align']    = 'left';
+		isset($settings['title-align']) or $settings['title-align'] = false;
 		isset($settings['process'])  or $settings['process']  = null;
 		isset($settings['format'])   or $settings['format']   = null;
 		isset($settings['default'])  or $settings['default']  = null;
