@@ -218,6 +218,7 @@ class AutoForm
 					break;
 				case 'textarea':
 					$fields .= static::textarea($name, $label, $value, $attr, $errors);
+					break;
 				case 'password':
 					$fields .= static::password($name, $label, $value, $attr, $errors);
 					break;
