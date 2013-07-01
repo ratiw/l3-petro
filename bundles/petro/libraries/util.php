@@ -41,6 +41,7 @@ class Util
 		{
 			case 'number':
 				$p = $format['param'];
+				$value = (is_null($value) || empty($value)) ? 0.0 : $value;
 				$value = number_format($value, $p[0], $p[1], $p[2]);
 				break;
 			case 'date':
