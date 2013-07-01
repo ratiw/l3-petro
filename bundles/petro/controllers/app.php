@@ -85,7 +85,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
 
 		if (is_null($this->model))
 		{
-			$this->model = $this->app_name;
+			$this->model = \Str::singular($this->app_name);
 		}
 
 		// if page_title is not set, guess one from app_name or app_url

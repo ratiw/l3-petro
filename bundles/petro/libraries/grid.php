@@ -193,7 +193,10 @@ class Grid
 
 	public function make_grid($columns = null)
 	{
-		isset($columns) or $columns = array_keys($this->fields);
+		if (!isset($columns) || empty($columns))
+		{
+			$columns = array_keys($this->fields);
+		}
 
 		$data['fields']   = $this->fields;
 		$data['columns']  = $columns;
