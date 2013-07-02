@@ -57,6 +57,11 @@ class GridFilters
 
 		foreach ($filters as $name => &$prop)
 		{
+			if (is_int($name))
+			{
+				$name = $prop;
+				$prop = array('type' => 'string');
+			}
 			$label = isset($prop['label'])
 				? $prop['label']
 				: \Lang::line($model.'.'.$name)->get(null, false) ?: \Str::title($name);

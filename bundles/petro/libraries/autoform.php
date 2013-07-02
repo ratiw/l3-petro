@@ -206,6 +206,11 @@ class AutoForm
 			$options = isset($settings['options']) ? $settings['options'] : array();
 			$attr    = isset($settings['attr']) ? $settings['attr'] : array();
 
+			if (isset($settings['align']))
+			{
+				$attr = array_merge($attr, array('class' => 'align-'.$settings['align']));
+			}
+
 			if (!empty($data) and !$settings['editable'])
 			{
 				$attr['readonly'] = 'readonly';
