@@ -13,7 +13,7 @@ class GridFilters
 	public static function render_group($model, $group_filters)
 	{
 
-		$out = \Form::open(\URI::current(), 'POST', array('id' => 'q_search', 'class' => 'form-vertical form-filter'));
+		$out = \Form::open(\URI::current(), 'GET', array('id' => 'q_search', 'class' => 'form-vertical form-filter'));
 
 		$i = 1;
 		foreach ($group_filters as $g)
@@ -42,7 +42,7 @@ class GridFilters
 
 		$out = '';
 
-		$out .= \Form::open(\URI::current(), 'POST', array('id' => 'q_search', 'class' => 'form-vertical form-filter'));
+		$out .= \Form::open(\URI::current(), 'GET', array('id' => 'q_search', 'class' => 'form-vertical form-filter'));
 		$out .= static::make_filters($model, $filters);
 		$out .= static::make_actions();
 		$out .= \Form::close();
