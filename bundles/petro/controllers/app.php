@@ -465,7 +465,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
 
 	public function after_insert() {}
 
-	public function before_update(&$data) {}
+	public function before_update(&$data) { return true; }
 
 	public function after_update() {}
 
