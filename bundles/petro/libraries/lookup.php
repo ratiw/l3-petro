@@ -25,7 +25,7 @@ class Lookup
 		if (isset($item))
 		{
 
-			$value = $query->where($key_col, $item)->get($value_col);
+			$value = $query->where($key_col, '=', $item)->only($value_col);
 			return \Lang::line($value)->get(null, false) ?: $value;
 		}
 		else
