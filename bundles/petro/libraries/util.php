@@ -45,7 +45,10 @@ class Util
 				$value = number_format($value, $p[0], $p[1], $p[2]);
 				break;
 			case 'date':
-				$value = static::convert_date($value, $format['from'], $format['to']);
+				$value = $value == '0000-00-00' ? '' : static::convert_date($value, $format['from'], $format['to']);
+				break;
+			case "sprintf":
+				$value = sprintf($format['param'], $value);
 				break;
 			default:
 				$value = str_replace('{value}', $value, $format['type']);
@@ -99,6 +102,9 @@ class Util
 					$arr['param'] = array($d, $dp, $ts);
 				}
 				break;
+			case 'sprintf':
+				$arr['param'] = $param[0];
+				break;
 		}
 
 		return $arr;
@@ -127,7 +133,7 @@ class Util
 		{
 			!is_array($v) and $v = trim($v);
 
-			if ( ! empty($v))
+			if ($v != '')
 			{
 				$k = static::parse_query_key($k);
 
@@ -253,7 +259,23 @@ class Util
 	public static function convert_date($input, $from, $to)
 	{
 		$date = \DateTime::createFromFormat($from, $input);
-		return $date->format($to);
+		return $date ? $date->format($to) : false;
+	}
+
+	public static function to_app_date($date)
+	{
+		if ($date == '0000-00-00') return false;
+
+		$from = \Config::get('petro::petro.db_date_format');
+		$to = \Config::get('petro::petro.app_date_format');
+		return static::convert_date($date, $from, $to);
+	}
+
+	public static function to_db_date($date)
+	{
+		$from = \Config::get('petro::petro.app_date_format');
+		$to = \Config::get('petro::petro.db_date_format');
+		return static::convert_date($date, $from, $to);
 	}
 
 	public static function date($year, $month, $day)
