@@ -66,6 +66,12 @@ class Petro_App_Controller extends Petro_Auth_Controller
 	protected $form_columns = null;
 
 	/**
+	 * Option to stay on new (create) page after save (insert)
+	 * @var boolean
+	 */
+	protected $stay_on_new = false;
+
+	/**
 	 * Initialize properties
 	 */
 	public function __construct()
@@ -107,7 +113,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
 
 	public function after($response)
 	{
-		$this->layout->page_title = Lang::line($this->page_title)->get();
+		$this->layout->page_title = Lang::line($this->model.'.'.$this->page_title)->get(null, $this->page_title);
 
 		// render breadcrumbs
 		$this->layout->breadcrumbs = Petro\Breadcrumbs::render($this->breadcrumbs_replace);
@@ -145,7 +151,8 @@ class Petro_App_Controller extends Petro_Auth_Controller
 	// handles filters post
 	public function post_index()
 	{
-		$this->set_content($this->index());
+		// $this->set_content($this->index());
+		return var_dump(\Input::all());
 	}
 
 	// GET foo/create
@@ -239,7 +246,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
 
 	public function create()
 	{
-		$this->set_page_title('New '.\Str::singular($this->page_title));
+		$this->set_page_title(Petro\Util::lang('petro.page_title:label:new', 'New ').\Str::singular($this->page_title));
 		// $form = $this->setup_form();
 		// return $form->build();
 		return $this->setup_form();
@@ -265,10 +272,10 @@ class Petro_App_Controller extends Petro_Auth_Controller
 					->with('notify', array('error', 'Save cancelled by user.'));
 			}
 
-			if ($data->save())
+			if ($this->save_data($data))
 			{
 				$this->after_insert();
-				return \Redirect::to($this->app_url)
+				return \Redirect::to($this->stay_on_new ? \URI::current() : $this->app_url)
 					->with('notify', array('success', "Data has been saved."));
 			}
 			else
@@ -297,7 +304,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
         return \Validator::make($input, $rules, $messages);
     }
 
-    public function get_input_data($data = null)
+    public function get_input_data(&$data = null)
     {
         $model = $this->model;
 
@@ -311,37 +318,48 @@ class Petro_App_Controller extends Petro_Auth_Controller
 	        $uneditables = isset($model::$uneditables) ? $model::$uneditables : array();
         }
 
-        $input = \Input::all();
-
-        // remove uneditable keys including the csrf token
-        $input = array_diff_key($input, array_flip($uneditables), array_flip(array('csrf_token')));
+        // get all input and remove uneditable keys including the csrf token
+        $input = array_diff_key(\Input::all(), array_flip($uneditables), array_flip(array('csrf_token')));
+        // allow the user to filter some more, if necessary
+        $input = $this->filter_input($input);
 
         $data->fill($input);
 
         return $data;
     }
 
+    public function filter_input(&$input)
+    {
+    	// by default, this method just return the original input
+    	return $input;
+    }
+
 	public function show($id)
 	{
 		$model = $this->model;
-		$name_lc = \Str::lower($this->app_name);
-
-		$this->action_items->add(Petro\Util::lang('petro.action_item:btn:edit', 'Edit').\Str::singular($this->app_name), $name_lc.'/edit/'.$id);
-		$this->action_items->add(Petro\Util::lang('petro.action_item:btn:delete', 'Delete').\Str::singular($this->app_name), $name_lc.'/destroy/'.$id,
-			array('data-toggle' => 'modal', 'data-target' => '#petro-confirm', 'class' => 'del-item',)
-		);
 
 		$data = $model::find($id);
 		if (is_null($data))
 		{
 			return \Redirect::to(\URL::current())
-				->with(array('notify', "Record ID: $id not found!"));
+				->with('notify',
+					array('error', \Lang::line('petro.show:not_found:msg', array('id' => $id))->get())
+				);
+		}
+		else
+		{
+			$name_lc = \Str::lower($this->app_name);
+
+			$this->action_items->add(Petro\Util::lang('petro.action_item:btn:edit', 'Edit').\Str::singular($this->app_name), $name_lc.'/edit/'.$id);
+			$this->action_items->add(Petro\Util::lang('petro.action_item:btn:delete', 'Delete').\Str::singular($this->app_name), $name_lc.'/destroy/'.$id,
+				array('data-toggle' => 'modal', 'data-target' => '#petro-confirm', 'class' => 'del-item',)
+			);
 		}
 
 		// $this->set_page_title($data->name);
 
 		$content = Petro\Panel::render(
-				$this->app_name.' Information',
+				$this->app_name.Petro\Util::lang('petro.panel:label:information', ' Information'),
 				Petro\AttrTable::render($data, $this->view_columns)
 				);
 
@@ -356,16 +374,12 @@ class Petro_App_Controller extends Petro_Auth_Controller
 	{
 		$model = $this->model;
 
-		$this->set_page_title('Edit '.\Str::singular($this->page_title));
+		$this->set_page_title(Petro\Util::lang('petro.page_title:label:edit', 'Edit ').\Str::singular($this->page_title));
 
 		if (is_null($data = $model::find($id)))
 		{
 			return "Data not found. id#$id";
 		}
-
-		// $form = $this->setup_form();
-
-		// return $form->build($data);
 
 		return $this->setup_form($data);
 	}
@@ -394,11 +408,11 @@ class Petro_App_Controller extends Petro_Auth_Controller
 			// if the method returns true, then updated data, or else cancel the update
 			if ( ! $this->before_update($data))
 			{
-				\Redirect::to($this->app_url)
+				return \Redirect::to($this->app_url)
 					->with('notify', array('error', 'Update cancelled by user.'));
 			}
 
-			if ($data->save())
+			if ($this->update_data($data))
 			{
 				$this->after_update();
 				return \Redirect::to($this->app_url)
@@ -425,7 +439,7 @@ class Petro_App_Controller extends Petro_Auth_Controller
 		}
 		else
 		{
-			if ($data->delete())
+			if ($this->delete_data($data))
 			{
 				$this->after_delete();
 				return \Redirect::to($this->app_url)
@@ -463,13 +477,28 @@ class Petro_App_Controller extends Petro_Auth_Controller
 
 	public function before_insert(&$data) { return true; }
 
+	public function save_data(&$data)
+	{
+		return $data->save();
+	}
+
 	public function after_insert() {}
 
 	public function before_update(&$data) { return true; }
 
+	public function update_data(&$data)
+	{
+		return $data->save();
+	}
+
 	public function after_update() {}
 
 	public function before_delete($id) { return true; }
+
+	public function delete_data(&$data)
+	{
+		return $data->delete();
+	}
 
 	public function after_delete() {}
 
