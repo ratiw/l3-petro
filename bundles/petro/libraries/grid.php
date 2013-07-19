@@ -220,7 +220,7 @@ class Grid
 
 			if ( ! $settings['visible']) continue;
 
-			$settings['title-align'] and $class .= ' '.$settings['title-align'];
+			$settings['title-align'] and $class .= ' align-'.$settings['title-align'];
 
 			if ($settings['sortable'])
 			{
@@ -303,6 +303,11 @@ class Grid
 					{
 						$value = call_user_func(array($this->model, $settings['process']), $row, $value);
 					}
+				}
+
+				if ($settings['type'] == 'date' and !isset($settings['format']))
+				{
+					$settings['format'] = 'date';
 				}
 
 				if (isset($settings['format']))
@@ -414,9 +419,21 @@ class Grid
 				};
 
 				$base = \URL::current().'/';
-				$out  = $action('default_action_view', $base.'view/'.$data->id, 'View');
-				$out .= '&nbsp;'.$action('default_action_edit', $base.'edit/'.$data->id, 'Edit');
-				$out .= '&nbsp;'.$action('default_action_delete', $base.'destroy/'.$data->id, 'Delete');
+				$out  = '<span>';
+				if (\Config::get('petro::petro.grid.actions_use_text', false))
+				{
+					$out .= $action('default_action_view_text', $base.'view/'.$data->id, 'View');
+					$out .= '&nbsp;'.$action('default_action_edit_text', $base.'edit/'.$data->id, 'Edit');
+					$out .= '&nbsp;'.$action('default_action_delete_text', $base.'destroy/'.$data->id, 'Delete');
+					$out .= '</span>';
+				}
+				else
+				{
+					$out .= $action('default_action_view', $base.'view/'.$data->id, 'View');
+					$out .= '&nbsp;'.$action('default_action_edit', $base.'edit/'.$data->id, 'Edit');
+					$out .= '&nbsp;'.$action('default_action_delete', $base.'destroy/'.$data->id, 'Delete');
+					$out .= '</span>';
+				}
 				return $out;
 			}
 		));

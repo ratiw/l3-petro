@@ -1,7 +1,7 @@
 <?php
 
 return array(
-	'site_name' => 'Petro!',
+	'site_name' => 'Payroll+',
 
 	'menu' => array(
 		'table' => 'menu',
@@ -42,7 +42,8 @@ return array(
 	 *
 	 */
 	'lookup' => array(
-		'table' => 'lookup',
+		// 'table' => 'lookup',
+		'table' => 'lu_lists',
 		'key_column' => 'code',
 		'value_column' => 'name',
 		'sort_column' => 'seq',
@@ -66,6 +67,7 @@ return array(
 		'format_number'         => array(2, '.', ','),
 		'format_date_from'      => 'Y-m-d',
 		'format_date_to'        => 'd/m/Y',
+		'actions_use_text'		=> true,
 	),
 
 	'template' => array(
@@ -104,28 +106,31 @@ return array(
 
 		// template for Petro_Grid
 		'grid'	=> array(
-			'wrapper_start' 			=> '<div class="index_as_table">',
-			'wrapper_end'   			=> '</div>',
-			'table_start'   			=> '<table class="index_table" cellspacing="0">',
-			'table_end'     			=> '</table>',
-			'table_header_start'		=> '<thead>',
-			'table_header_end'			=> '</thead>',
-			'table_header_row_start'	=> '<tr>',
-			'table_header_row_end'		=> '</tr>',
-			'table_body_start'			=> '<tbody>',
-			'table_body_end'			=> '</tbody>',
-			'table_body_row_odd_start'	=> '<tr class="odd">',
-			'table_body_row_odd_end'	=> '</tr>',
-			'table_body_row_even_start'	=> '<tr class="even">',
-			'table_body_row_even_end'	=> '</tr>',
-			'table_summary_start'		=> '<tfoot>',
-			'table_summary_end'			=> '</tfoot>',
-			'table_summary_row_start'   => '<tr>',
-			'table_summary_row_end'		=> '</tr>',
-			'table_summary_col'         => '<td{align}>{value}</td>',
-			'default_action_view'       => "<a href=\"{url}\">{label}</a>",
-			'default_action_edit'       => "<a href=\"{url}\">{label}</a>",
-			'default_action_delete' 	=> "<a class=\"del-item\" url=\"{url}\" data-toggle=\"modal\" data-target=\"#petro-confirm\" class=\"del-item\">{label}</a>",
+			'wrapper_start'              => '<div class="index_as_table">',
+			'wrapper_end'                => '</div>',
+			'table_start'                => '<table class="index_table" cellspacing="0">',
+			'table_end'                  => '</table>',
+			'table_header_start'         => '<thead>',
+			'table_header_end'           => '</thead>',
+			'table_header_row_start'     => '<tr>',
+			'table_header_row_end'       => '</tr>',
+			'table_body_start'           => '<tbody>',
+			'table_body_end'             => '</tbody>',
+			'table_body_row_odd_start'   => '<tr class="odd">',
+			'table_body_row_odd_end'     => '</tr>',
+			'table_body_row_even_start'  => '<tr class="even">',
+			'table_body_row_even_end'    => '</tr>',
+			'table_summary_start'        => '<tfoot>',
+			'table_summary_end'          => '</tfoot>',
+			'table_summary_row_start'    => '<tr>',
+			'table_summary_row_end'      => '</tr>',
+			'table_summary_col'          => '<td{align}>{value}</td>',
+			'default_action_view'        => "<a href=\"{url}\" title=\"View\"><i class=\"icon-list-alt\"></i></a>",
+			'default_action_edit'        => "<a href=\"{url}\" title=\"Edit\"><i class=\"icon-edit\"></i></a>",
+			'default_action_delete'      => "<a title=\"Delete\" class=\"del-item\" url=\"{url}\" data-toggle=\"modal\" data-target=\"#petro-confirm\" class=\"del-item\"><i class=\"icon-trash\"></i></a>",
+			'default_action_view_text'   => "<a href=\"{url}\">{label}</a>",
+			'default_action_edit_text'   => "<a href=\"{url}\">{label}</a>",
+			'default_action_delete_text' => "<a class=\"del-item\" url=\"{url}\" data-toggle=\"modal\" data-target=\"#petro-confirm\" class=\"del-item\">{label}</a>",
 		),
 
 		'pagination' => array(
