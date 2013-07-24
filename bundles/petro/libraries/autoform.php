@@ -47,12 +47,18 @@ class AutoForm
 		}
 	}
 
-	public function add_model($model)
+	public function set_model($model)
 	{
 		$this->model = $model;
 
 		$this->rules = isset($model::$rules) ? $model::$rules : array();
 		$this->fields = static::grab_fields($model);
+	}
+
+	// add_model has been depricated, use set_model instead
+	public function add_model($model)
+	{
+		$this->set_model($model);
 	}
 
 	public static function grab_fields($model)
@@ -146,6 +152,7 @@ class AutoForm
 		}
 
 		// set default for attributes
+		isset($settings['type'])     or $settings['type'] = 'text';
 		isset($settings['editable']) or $settings['editable'] = true;
 		isset($settings['visible'])  or $settings['visible']  = true;
 		isset($settings['sortable']) or $settings['sortable'] = false;
@@ -202,7 +209,7 @@ class AutoForm
 			$default = $settings['default'] ?: '';
 			$value   = \Input::old($name, !empty($data) ? $data->$name : $default);
 			$label   = $settings['label'];
-			$type    = isset($settings['type']) ? $settings['type'] : 'input';
+			$type    = isset($settings['type']) ? $settings['type'] : 'text';
 			$options = isset($settings['options']) ? $settings['options'] : array();
 			$attr    = isset($settings['attr']) ? $settings['attr'] : array();
 
@@ -241,6 +248,12 @@ class AutoForm
 					break;
 				case 'select':
 					$fields .= static::select($name, $label, $value, $options, $attr, $errors);
+					break;
+				case 'switch':
+					$fields .= static::switch_onoff($name, $label, $value, $options, $attr, $errors);
+					break;
+				case 'date':
+					$fields .= static::date($name, $label, $value, $attr, $errors);
 					break;
 				default:
 					$fields .= static::text($name, $label, $value, $attr, $errors);
@@ -330,8 +343,9 @@ class AutoForm
 	// public static function textarea($name, $value = null, $attr = array(), $label = '', $errors = null)
 	public static function textarea($name, $label = '', $value = null, $attr = array(), $errors = null)
 	{
-		// return static::_input('textarea', $name, $value, $attr, $label, $errors);
-		return static::_input('textarea', $name, $label, $value, $attr, $errors);
+		// return static::_input('textarea', $name, $label, $value, $attr, $errors);
+		$out = \Form::textarea($name, $value, $attr);
+		return static::render_field($out, $name, $label, $errors);
 	}
 
 	// public static function password($name, $value = null, $attr = array(), $label = '', $errors = null)
@@ -368,6 +382,15 @@ class AutoForm
 		return static::render_field($out, $name, $label, $errors);
 	}
 
+	public static function switch_onoff($name, $label, $value, $options, $attr, $errors)
+	{
+		$out  = '<div class="switch" data-on-label="'.$options['1'].'" data-off-label="'.$options['0'].'">';
+		$out .= \Form::checkbox($name, $value, ($value == '1'), $attr);
+		// $out .= '<input type="checkbox" name="'.$name.'"'.$attr.'>';
+		$out .= '</div>';
+		return static::render_field($out, $name, $label, $errors);
+	}
+
 	// public static function checkbox_group($name, $options = array(), $checked = null, $is_inline = false, $attr = array(), $label = '', $errors = null)
 	public static function checkbox_group($name, $label = '', $options = array(), $checked = null, $is_inline = false, $attr = array(), $errors = null)
 	{
@@ -386,4 +409,12 @@ class AutoForm
 		return static::render_field($out, $name, $label, $errors);
 	}
 
+	public static function date($name, $label = '', $value = null, $attr = array(), $errors = null)
+	{
+		$out = '<div class="input-append">';
+		$out .= \Form::text($name, Util::to_app_date($value), array_merge($attr, array('class' => 'datepicker', 'data-mask' => '99/99/9999')));
+		// $out .= '<a href="" class="btn btn-datepicker"><i class="icon-calendar"></i></a>';
+		$out .= '</div>';
+		return static::render_field($out, $name, $label, $errors);
+	}
 }
